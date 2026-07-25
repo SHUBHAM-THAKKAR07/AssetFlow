@@ -1,10 +1,17 @@
 import { createServer } from 'http';
-import app from './app';
+import app from './app'; // 👈 The app object must be imported FIRST
 import env from './config/env';
 import logger from './config/logger';
 import { bootstrap } from './bootstrap';
 import { initSocketServer } from './socket/socketServer';
 import { disconnectDatabase } from './config/database';
+import cors from 'cors'; // 👈 Moved imports together cleanly
+
+// 💡 Configure CORS immediately after app is imported and before the server boots
+app.use(cors({
+  origin: 'https://shubham-thakkar07.github.io', // 👈 Fixed your full GitHub pages URL
+  credentials: true
+}));
 
 async function startServer() {
   try {
@@ -55,7 +62,6 @@ async function startServer() {
 
     process.on('unhandledRejection', (reason, promise) => {
       logger.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
-      // Let PM2 or process manager restart the node instance on crashes in production
     });
 
     process.on('uncaughtException', (error) => {
