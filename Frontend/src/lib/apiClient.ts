@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Base backend URL config
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+// Base backend URL config (Updated fallback from localhost to your production Render URL)
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://onrender.com'; // 👈 FIXED THIS LINE
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
