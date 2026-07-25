@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+// 🚀 Fixed: Hardcoded to point directly to your live Render server domain
+const SOCKET_URL = 'https://onrender.com';
 
 let socket: Socket | null = null;
 
