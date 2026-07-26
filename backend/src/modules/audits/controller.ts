@@ -8,7 +8,7 @@ export class AuditController {
 
   public static async createCycle(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const creatorEmployeeId = req.user?.userId;
+      const creatorEmployeeId = req.user?.employeeId;
       if (!creatorEmployeeId) {
         throw new BadRequestError('User context missing');
       }
@@ -69,7 +69,7 @@ export class AuditController {
 
   public static async verifyItem(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const auditorEmployeeId = req.user?.userId;
+      const auditorEmployeeId = req.user?.employeeId;
       if (!auditorEmployeeId) {
         throw new BadRequestError('User context missing');
       }
@@ -85,7 +85,7 @@ export class AuditController {
 
   public static async resolveDiscrepancy(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const resolverEmployeeId = req.user?.userId;
+      const resolverEmployeeId = req.user?.employeeId;
       if (!resolverEmployeeId) {
         throw new BadRequestError('User context missing');
       }
