@@ -39,7 +39,7 @@ export class BookingController {
 
   public static async createBooking(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const employeeId = req.user?.userId;
+      const employeeId = req.user?.employeeId;
       if (!employeeId) {
         throw new BadRequestError('User context missing');
       }
@@ -75,7 +75,7 @@ export class BookingController {
 
   public static async cancelBooking(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const employeeId = req.user?.userId;
+      const employeeId = req.user?.employeeId;
       const roles = req.user?.roles || [];
       if (!employeeId) {
         throw new BadRequestError('User context missing');
