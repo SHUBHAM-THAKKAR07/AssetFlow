@@ -231,10 +231,6 @@ function CategoriesTab() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Category Name</label>
-            <input value={name} onChange={e => setName(e.target.value)} className={inputCls} style={inputStyle} placeholder="e.g. Laptops" onFocus={e => e.target.style.borderColor = '#7A3B5E'} onBlur={e => e.target.style.borderColor = '#E7E5EA'} />
-          </div>
-          <div>
             <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Category Code</label>
             <input value={code} onChange={e => setCode(e.target.value.toUpperCase())} className={inputCls} style={inputStyle} placeholder="e.g. LAP" maxLength={20} />
             <p className="text-xs mt-1" style={{ color: '#9C97A3' }}>A short unique code, at least 2 letters (e.g. LAP for Laptops)</p>
