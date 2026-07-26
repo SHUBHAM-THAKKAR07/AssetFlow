@@ -26,6 +26,7 @@ const actionColors: Record<string, { bg: string; text: string }> = {
 export function DashboardPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const isEmployee = user?.role === 'Employee'
 
   // Queries using TanStack Query for live data
   const { data: kpi } = useQuery({
@@ -59,11 +60,14 @@ export function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[28px] font-bold" style={{ color: '#1A1621' }}>Dashboard Overview</h1>
+          <h1 className="text-[28px] font-bold" style={{ color: '#1A1621' }}>
+            {isEmployee ? 'My Dashboard' : 'Dashboard Overview'}
+          </h1>
           <p className="mt-0.5 text-sm" style={{ color: '#6B6470' }}>
             Welcome back, <span className="font-semibold" style={{ color: '#7A3B5E' }}>{user?.name}</span>
           </p>
         </div>
+
         <div className="flex items-center gap-2 text-xs" style={{ color: '#9C97A3' }}>
           <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Last synced: Live
         </div>
@@ -81,9 +85,11 @@ export function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3">
-        <button onClick={() => navigate('/assets')} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-95" style={btnPrimary}>
-          <Plus className="w-4 h-4" /> Register Asset
-        </button>
+        {!isEmployee && (
+          <button onClick={() => navigate('/assets')} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-95" style={btnPrimary}>
+            <Plus className="w-4 h-4" /> Register Asset
+          </button>
+        )}
         <button onClick={() => navigate('/bookings')} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all hover:bg-slate-50" style={btnSecondary}>
           <CalendarPlus className="w-4 h-4" style={{ color: '#6B6470' }} /> Book Resource
         </button>
@@ -97,7 +103,7 @@ export function DashboardPage() {
         <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #E7E5EA' }}>
           <div className="px-5 py-4 flex items-center gap-2" style={{ borderBottom: '1px solid #E7E5EA' }}>
             <AlertTriangle className="w-4 h-4" style={{ color: '#C0392B' }} />
-            <h3 className="font-semibold text-sm" style={{ color: '#1A1621' }}>Overdue Returns</h3>
+            <h3 className="font-semibold text-sm" style={{ color: '#1A1621' }}>{isEmployee ? 'My Overdue Returns' : 'Overdue Returns'}</h3>
             <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#FBEAE8', color: '#C0392B' }}>{overdue.length}</span>
           </div>
           {overdue.length === 0
@@ -122,7 +128,7 @@ export function DashboardPage() {
         <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #E7E5EA' }}>
           <div className="px-5 py-4 flex items-center gap-2" style={{ borderBottom: '1px solid #E7E5EA' }}>
             <TrendingUp className="w-4 h-4" style={{ color: '#2563EB' }} />
-            <h3 className="font-semibold text-sm" style={{ color: '#1A1621' }}>Upcoming Returns</h3>
+            <h3 className="font-semibold text-sm" style={{ color: '#1A1621' }}>{isEmployee ? 'My Upcoming Returns' : 'Upcoming Returns'}</h3>
             <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#EAF1FE', color: '#2563EB' }}>{upcoming.length}</span>
           </div>
           {upcoming.length === 0

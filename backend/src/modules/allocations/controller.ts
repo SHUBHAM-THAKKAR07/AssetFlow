@@ -4,6 +4,7 @@ import { sendSuccess } from '../../utils/responseFormatter';
 import { getPaginationOptions } from '../../utils/pagination';
 import { AllocationStatus } from '@prisma/client';
 import { BadRequestError } from '../../errors/customErrors';
+import { ROLES } from '../../constants/appConstants';
 
 export class AllocationController {
   public static async allocate(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -23,8 +24,15 @@ export class AllocationController {
   public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const pagination = getPaginationOptions(req.query.page, req.query.limit);
-      const employeeId = req.query.employeeId as string | undefined;
       const status = req.query.status as AllocationStatus | undefined;
+
+      // A plain Employee can only ever see their own records — ignore any
+      // employeeId they pass in and force it to themselves. Managers/Admins
+      // keep the ability to filter by any employeeId (or see everyone).
+      const isPrivileged = req.user?.roles?.some((r) => r !== ROLES.EMPLOYEE);
+      const employeeId = isPrivileged
+        ? (req.query.employeeId as string | undefined)
+        : req.user?.userId;
 
       const allocations = await AllocationService.getAllAllocations(pagination, employeeId, status);
       sendSuccess(res, allocations);
