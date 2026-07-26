@@ -9,10 +9,13 @@ import type { Asset } from '@/types'
 import { formatDate } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useAuth } from '@/context/AuthContext'
 
 const STATUSES = ['Available', 'Allocated', 'Reserved', 'UnderMaintenance', 'Lost', 'Retired', 'Disposed']
 
 export function AssetsPage() {
+  const { user } = useAuth()
+  const isEmployee = user?.role === 'Employee'
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string[]>([])
@@ -105,9 +108,11 @@ export function AssetsPage() {
             <h1 className="text-[28px] font-bold" style={{ color: '#1A1621' }}>Asset Registry</h1>
             <p className="text-sm mt-0.5" style={{ color: '#6B6470' }}>{filtered.length} assets found</p>
           </div>
-          <button onClick={() => setShowRegister(true)} className="flex items-center gap-2 px-4 py-2 text-white rounded-xl text-sm font-semibold transition-all hover:brightness-90 cursor-pointer" style={{ background: '#7A3B5E' }}>
-            <Plus className="w-4 h-4" /> Register Asset
-          </button>
+          {!isEmployee && (
+            <button onClick={() => setShowRegister(true)} className="flex items-center gap-2 px-4 py-2 text-white rounded-xl text-sm font-semibold transition-all hover:brightness-90 cursor-pointer" style={{ background: '#7A3B5E' }}>
+              <Plus className="w-4 h-4" /> Register Asset
+            </button>
+          )}
         </div>
 
         {/* Search + Filters */}
