@@ -259,6 +259,7 @@ function CategoriesTab() {
   )
 }
 
+
 function LocationsTab() {
   const queryClient = useQueryClient()
   const [showCreate, setShowCreate] = useState(false)
