@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AssetService } from './service';
 import { sendSuccess } from '../../utils/responseFormatter';
+import { EmployeeRepository } from '../employees/repository';
 import { getPaginationOptions } from '../../utils/pagination';
 import { AssetStatus } from '@prisma/client';
 import { getFileUrl } from '../../utils/fileUpload';
@@ -9,8 +10,10 @@ import { BadRequestError } from '../../errors/customErrors';
 export class AssetController {
   public static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const creatorEmployeeId = req.user?.userId; // Assuming user has linked employee profile
-      const asset = await AssetService.createAsset(req.body, creatorEmployeeId);
+      const employee = req.user?.userId
+        ? await EmployeeRepository.findByUserId(req.user.userId)
+        : null;
+      const asset = await AssetService.createAsset(req.body, employee?.id);
       sendSuccess(res, asset, 'Asset registered successfully', 201);
     } catch (error) {
       next(error);
