@@ -363,8 +363,6 @@ function LocationsTab() {
   )
 }
 
-</parameter>
-
 function EmployeesTab() {
   const queryClient = useQueryClient()
   const [showPromote, setShowPromote] = useState(false)
