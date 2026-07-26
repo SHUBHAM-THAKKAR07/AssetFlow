@@ -7,7 +7,7 @@ import { BadRequestError } from '../../errors/customErrors';
 export class NotificationController {
   public static async send(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const creatorEmployeeId = req.user?.userId;
+      const creatorEmployeeId = req.user?.employeeId;
       const notification = await NotificationService.sendNotification(req.body, creatorEmployeeId);
       sendSuccess(res, notification, 'Notification sent successfully', 201);
     } catch (error) {
@@ -17,7 +17,7 @@ export class NotificationController {
 
   public static async getMyNotifications(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const employeeId = req.user?.userId;
+      const employeeId = req.user?.employeeId;
       if (!employeeId) {
         throw new BadRequestError('User context missing');
       }
@@ -34,7 +34,7 @@ export class NotificationController {
 
   public static async markRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const employeeId = req.user?.userId;
+      const employeeId = req.user?.employeeId;
       if (!employeeId) {
         throw new BadRequestError('User context missing');
       }
@@ -48,7 +48,7 @@ export class NotificationController {
 
   public static async markAllRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const employeeId = req.user?.userId;
+      const employeeId = req.user?.employeeId;
       if (!employeeId) {
         throw new BadRequestError('User context missing');
       }
