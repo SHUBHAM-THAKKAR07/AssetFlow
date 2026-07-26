@@ -9,7 +9,7 @@ import { ROLES } from '../../constants/appConstants';
 export class AllocationController {
   public static async allocate(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const allocatorUserId = req.user?.userId;
+      const allocatorUserId = req.user?.employeeId;
       if (!allocatorUserId) {
         throw new BadRequestError('User context missing');
       }
@@ -32,7 +32,7 @@ export class AllocationController {
       const isPrivileged = req.user?.roles?.some((r) => r !== ROLES.EMPLOYEE);
       const employeeId = isPrivileged
         ? (req.query.employeeId as string | undefined)
-        : req.user?.userId;
+        : req.user?.employeeId;
 
       const allocations = await AllocationService.getAllAllocations(pagination, employeeId, status);
       sendSuccess(res, allocations);
@@ -52,7 +52,7 @@ export class AllocationController {
 
   public static async returnAsset(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const receivedByEmployeeId = req.user?.userId;
+      const receivedByEmployeeId = req.user?.employeeId;
       if (!receivedByEmployeeId) {
         throw new BadRequestError('User context missing');
       }
@@ -66,7 +66,7 @@ export class AllocationController {
 
   public static async createTransfer(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const requestedByEmployeeId = req.user?.userId;
+      const requestedByEmployeeId = req.user?.employeeId;
       if (!requestedByEmployeeId) {
         throw new BadRequestError('User context missing');
       }
@@ -80,7 +80,7 @@ export class AllocationController {
 
   public static async handleTransfer(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const deciderEmployeeId = req.user?.userId;
+      const deciderEmployeeId = req.user?.employeeId;
       if (!deciderEmployeeId) {
         throw new BadRequestError('User context missing');
       }

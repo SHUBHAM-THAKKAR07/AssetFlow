@@ -5,6 +5,7 @@ export interface TokenPayload {
   userId: string;
   email: string;
   roles: string[];
+  employeeId?: string; // resolved at request time by authMiddleware — never encoded in the JWT itself
 }
 
 export function generateAccessToken(payload: TokenPayload): string {
