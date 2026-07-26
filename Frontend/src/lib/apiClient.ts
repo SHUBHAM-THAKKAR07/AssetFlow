@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // 🚀 Bypassing env variables completely to force-connect to your live Render backend API
-const BASE_URL = 'https://onrender.com';
+const BASE_URL = 'https://assetflow-disq.onrender.com';
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,

@@ -27,10 +27,11 @@ export class AuthController {
 
       const data = await AuthService.login(req.body.email, req.body.password, ipAddress, userAgent);
 
-      // Optionally set HTTP-only cookie for refresh token
+      // ✅ FIXED: Configured for cross-domain usage between Render and GitHub Pages
       res.cookie('refreshToken', data.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,        // Enforces HTTPS (required for sameSite: 'none')
+        sameSite: 'none',    // Allows cookie sharing across different domains
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -48,7 +49,14 @@ export class AuthController {
       }
 
       await AuthService.logout(refreshToken);
-      res.clearCookie('refreshToken');
+      
+      // ✅ FIXED: Matching cookie configuration so the browser knows which cookie to delete
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+      });
+      
       sendSuccess(res, null, 'Logged out successfully');
     } catch (error) {
       next(error);

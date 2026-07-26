@@ -2,7 +2,7 @@ import cors from 'cors';
 
 export const corsOptions: cors.CorsOptions = {
   origin: [
-    'https://github.io', // Allow your production live website
+    'https://shubham-thakkar07.github.io/AssetFlow/', // Allow your production live website
     'http://localhost:5173',               // Keep local Vite development working
     'http://localhost:3000'
   ],
