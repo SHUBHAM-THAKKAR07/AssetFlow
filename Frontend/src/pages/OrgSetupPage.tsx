@@ -8,7 +8,7 @@ import type { Department, AssetCategory, User } from '@/types'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-type Tab = 'departments' | 'categories' | 'employees'
+type Tab = 'departments' | 'categories' | 'locations' | 'employees'
 
 const inputCls = "w-full px-3.5 py-2.5 rounded-xl border text-sm outline-none transition-all"
 const inputStyle = { borderColor: '#E7E5EA', color: '#1A1621', background: 'white' }
@@ -24,6 +24,7 @@ export function OrgSetupPage() {
   const tabs = [
     { id: 'departments' as Tab, label: 'Departments', icon: FolderTree },
     { id: 'categories' as Tab, label: 'Asset Categories', icon: FolderTree },
+    { id: 'locations' as Tab, label: 'Locations', icon: FolderTree },
     { id: 'employees' as Tab, label: 'Employee Directory', icon: Users },
   ]
 
@@ -46,6 +47,7 @@ export function OrgSetupPage() {
 
       {tab === 'departments' && <DepartmentsTab />}
       {tab === 'categories' && <CategoriesTab />}
+      {tab === 'locations' && <LocationsTab />}
       {tab === 'employees' && <EmployeesTab />}
     </div>
   )
@@ -256,6 +258,111 @@ function CategoriesTab() {
     </>
   )
 }
+
+function LocationsTab() {
+  const queryClient = useQueryClient()
+  const [showCreate, setShowCreate] = useState(false)
+  const [name, setName] = useState('')
+  const [code, setCode] = useState('')
+  const [building, setBuilding] = useState('')
+  const [floor, setFloor] = useState('')
+  const [room, setRoom] = useState('')
+
+  const { data: locations = [] } = useQuery({
+    queryKey: ['locations'],
+    queryFn: apiService.getLocations,
+  })
+
+  const createMutation = useMutation({
+    mutationFn: apiService.createLocation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['locations'] })
+      toast.success('Location created successfully!')
+      setShowCreate(false)
+      setName('')
+      setCode('')
+      setBuilding('')
+      setFloor('')
+      setRoom('')
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || 'Failed to create location')
+    }
+  })
+
+  const handleCreate = () => {
+    if (!name) return toast.error('Location Name is required')
+    if (code.trim().length < 2) return toast.error('Code must be at least 2 characters')
+    createMutation.mutate({
+      name,
+      code: code.toUpperCase(),
+      building: building || undefined,
+      floor: floor || undefined,
+      room: room || undefined,
+    })
+  }
+
+  return (
+    <>
+      <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #E7E5EA' }}>
+        <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #E7E5EA' }}>
+          <h3 className="font-semibold text-sm" style={{ color: '#1A1621' }}>Locations <span style={{ color: '#9C97A3' }}>({locations.length})</span></h3>
+          <button onClick={() => setShowCreate(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold text-white rounded-xl hover:brightness-90" style={{ background: '#7A3B5E' }}>
+            <Plus className="w-4 h-4" /> Add
+          </button>
+        </div>
+        <div className="p-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {locations.map((loc: any) => (
+            <div key={loc.id} className="rounded-2xl p-4" style={{ border: '1px solid #E7E5EA' }}>
+              <p className="font-semibold text-sm" style={{ color: '#1A1621' }}>{loc.name}</p>
+              <p className="text-xs mt-0.5" style={{ color: '#9C97A3' }}>
+                {[loc.building, loc.floor && `Floor ${loc.floor}`, loc.room && `Room ${loc.room}`].filter(Boolean).join(' · ') || 'No details added'}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Create Location"
+        footer={
+          <>
+            <button onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm font-medium rounded-xl border hover:bg-slate-50" style={{ borderColor: '#E7E5EA', color: '#6B6470' }}>Cancel</button>
+            <button onClick={handleCreate} className="px-4 py-2 text-sm font-semibold text-white rounded-xl hover:brightness-90" style={{ background: '#7A3B5E' }}>
+              {createMutation.isPending ? 'Creating…' : 'Create'}
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Location Name</label>
+            <input value={name} onChange={e => setName(e.target.value)} className={inputCls} style={inputStyle} placeholder="e.g. HQ Main Building" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Location Code</label>
+            <input value={code} onChange={e => setCode(e.target.value.toUpperCase())} className={inputCls} style={inputStyle} placeholder="e.g. HQ" maxLength={20} />
+            <p className="text-xs mt-1" style={{ color: '#9C97A3' }}>A short unique code, at least 2 letters</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Building</label>
+              <input value={building} onChange={e => setBuilding(e.target.value)} className={inputCls} style={inputStyle} placeholder="Optional" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Floor</label>
+              <input value={floor} onChange={e => setFloor(e.target.value)} className={inputCls} style={inputStyle} placeholder="Optional" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Room</label>
+              <input value={room} onChange={e => setRoom(e.target.value)} className={inputCls} style={inputStyle} placeholder="Optional" />
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </>
+  )
+}
+
+</parameter>
 
 function EmployeesTab() {
   const queryClient = useQueryClient()
