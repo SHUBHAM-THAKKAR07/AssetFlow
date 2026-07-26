@@ -112,9 +112,13 @@ function DepartmentsTab() {
   ]
 
   const handleCreate = () => {
-  if (!name) return toast.error('Category Name is required')
-  createMutation.mutate({ name, description })
-}
+    if (!name) return toast.error('Department Name is required')
+    createMutation.mutate({
+      name,
+      headEmployeeId: headEmployeeId || undefined,
+      parentDepartmentId: parentDepartmentId || undefined,
+    })
+  }
 
   return (
     <>
@@ -230,6 +234,10 @@ function CategoriesTab() {
         }
       >
         <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Category Name</label>
+            <input value={name} onChange={e => setName(e.target.value)} className={inputCls} style={inputStyle} placeholder="e.g. Laptops" onFocus={e => e.target.style.borderColor = '#7A3B5E'} onBlur={e => e.target.style.borderColor = '#E7E5EA'} />
+          </div>
           <div>
             <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Category Code</label>
             <input value={code} onChange={e => setCode(e.target.value.toUpperCase())} className={inputCls} style={inputStyle} placeholder="e.g. LAP" maxLength={20} />
