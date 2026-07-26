@@ -112,13 +112,9 @@ function DepartmentsTab() {
   ]
 
   const handleCreate = () => {
-    if (!name) return toast.error('Department Name is required')
-    createMutation.mutate({
-      name,
-      headEmployeeId: headEmployeeId || undefined,
-      parentDepartmentId: parentDepartmentId || undefined,
-    })
-  }
+  if (!name) return toast.error('Category Name is required')
+  createMutation.mutate({ name, description })
+}
 
   return (
     <>
@@ -167,6 +163,7 @@ function CategoriesTab() {
   const queryClient = useQueryClient()
   const [showCreate, setShowCreate] = useState(false)
   const [name, setName] = useState('')
+  const [code, setCode] = useState('')
   const [description, setDescription] = useState('')
 
   const { data: categories = [] } = useQuery({
@@ -181,6 +178,7 @@ function CategoriesTab() {
       toast.success('Asset category created successfully!')
       setShowCreate(false)
       setName('')
+      setCode('')
       setDescription('')
     },
     onError: (err: any) => {
@@ -190,7 +188,8 @@ function CategoriesTab() {
 
   const handleCreate = () => {
     if (!name) return toast.error('Category Name is required')
-    createMutation.mutate({ name, description })
+    if (code.trim().length < 2) return toast.error('Code must be at least 2 characters')
+    createMutation.mutate({ name, code: code.toUpperCase(), description })
   }
 
   return (
@@ -234,6 +233,11 @@ function CategoriesTab() {
           <div>
             <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Category Name</label>
             <input value={name} onChange={e => setName(e.target.value)} className={inputCls} style={inputStyle} placeholder="e.g. Laptops" onFocus={e => e.target.style.borderColor = '#7A3B5E'} onBlur={e => e.target.style.borderColor = '#E7E5EA'} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Category Code</label>
+            <input value={code} onChange={e => setCode(e.target.value.toUpperCase())} className={inputCls} style={inputStyle} placeholder="e.g. LAP" maxLength={20} />
+            <p className="text-xs mt-1" style={{ color: '#9C97A3' }}>A short unique code, at least 2 letters (e.g. LAP for Laptops)</p>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1.5" style={labelStyle}>Description</label>
